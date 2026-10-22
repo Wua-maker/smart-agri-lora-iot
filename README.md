@@ -170,3 +170,6 @@ const char* MQTT_TOPIC = "agriculture/sensor/01";
 
 開源授權
 本專案採 MIT License 授權釋出，歡迎社群自由 Fork、修改、延伸與實測反饋。
+
+![TX 接線圖](images/tx_wiring.jpg)
+![RX 接線圖](images/rx_wiring.jpg)
