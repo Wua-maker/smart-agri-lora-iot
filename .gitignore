@@ -1,0 +1,10 @@
+# 排除私密憑證設定檔
+config.h
+*/config.h
+
+# 排除系統與編譯暫存
+build/
+*.bin
+*.hex
+.DS_Store
+Thumbs.db
