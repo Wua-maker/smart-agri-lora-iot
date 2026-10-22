@@ -1,79 +1,42 @@
-\# 台灣智慧農業開源專案 (Open Smart Agri Taiwan)
+# 台灣智慧農業開源專案 (Open Smart Agri Taiwan)
 
-
-
-> \*\*低成本、免 SIM 卡、長續航野外環境監測節點與 IoT 閘道器\*\*  
-
+> **低成本、免 SIM 卡、長續航野外環境監測節點與 IoT 閘道器**  
 > A cost-effective, SIM-less, long-battery-life open-source agricultural IoT system.
 
+---
 
-
-\---
-
-
-
-\## 專案緣起與願景
-
-
+## 專案緣起與願景
 
 台灣農業面臨高齡化、極端氣候以及山區訊號覆蓋不足等挑戰。目前市售的商業智慧農業設備動輒數萬至數十萬元，且架構封閉、按月收費，維護成本極高。
 
-
-
-\*\*農業智慧化不是要取代人，而是在相同的耕作過程中，讓每一位務農者更專業、更有底氣。\*\*  
-
+**農業智慧化不是要取代人，而是在相同的耕作過程中，讓每一位務農者更專業、更有底氣。**  
 本專案全數開源，旨在以百元至千元級的硬體成本，打造在深山「無電、無網路」環境下依然能穩定運行的農業監測與防盜系統。
 
+---
 
+## 系統架構特色
 
-\---
+* **穿透山林・免 SIM 卡**：採用 SX1262 LoRa 射頻技術（台灣 NCC 合規 923.2 MHz 頻段），實現數公里免月租、抗干擾遠距傳輸。
+* **工業級感知**：採用 RS485 Modbus-RTU 協定讀取土壤七合一感測器（水分、溫度、EC、pH、氮、磷、鉀），避免一般類比感測針短期氧化腐蝕。
+* **低功耗與離網供電**：ESP32 深度睡眠（Deep Sleep）結合 18650 / 2S 鋰電池與太陽能供電，達成野外自給自足。
+* **實體防盜系統**：整合微動開關與隱藏解鎖開關，非法撬開時觸發本地蜂鳴警報並發送 LoRa 警報封包。
+* **雙模式接收閘道器**：RX 端支援 1.3 吋 OLED 即時現地輪播顯示，並透過 TLS (Port 8883) 轉發數據至 HiveMQ 雲端。
 
+---
 
-
-\## 系統架構特色
-
-
-
-\* \*\*穿透山林・免 SIM 卡\*\*：採用 SX1262 LoRa 射頻技術（台灣 NCC 合規 923.2 MHz 頻段），實現數公里免月租、抗干擾遠距傳輸。
-
-\* \*\*工業級感知\*\*：採用 RS485 Modbus-RTU 協定讀取土壤七合一感測器（水分、溫度、EC、pH、氮、磷、鉀），避免一般類比感測針短期氧化腐蝕。
-
-\* \*\*低功耗與離網供電\*\*：ESP32 深度睡眠（Deep Sleep）結合 18650 / 2S 鋰電池與太陽能供電，達成野外自給自足。
-
-\* \*\*實體防盜系統\*\*：整合微動開關與隱藏解鎖開關，非法撬開時觸發本地蜂鳴警報並發送 LoRa 警報封包。
-
-\* \*\*雙模式接收閘道器\*\*：RX 端支援 1.3 吋 OLED 即時現地輪播顯示，並透過 TLS (Port 8883) 轉發數據至 HiveMQ 雲端。
-
-
-
-\---
-
-
-
-\## 目錄結構
-
-
+## 目錄結構
 
 ```text
-
 Smart-Agri-IoT/
-
-├── TX\_Node/
-
-│   └── TX\_Node.ino         # 發射端韌體 (ESP32 + LoRa + RS485 + 防盜)
-
-├── RX\_Gateway/
-
-│   ├── RX\_Gateway.ino      # 接收端閘道器 (ESP32 + LoRa + WiFi + MQTT + OLED)
-
+├── TX_Node/
+│   └── TX_Node.ino         # 發射端韌體 (ESP32 + LoRa + RS485 + 防盜)
+├── RX_Gateway/
+│   ├── RX_Gateway.ino      # 接收端閘道器 (ESP32 + LoRa + WiFi + MQTT + OLED)
 │   ├── config.example.h    # 憑證設定範本
-
 │   └── config.h            # 個人憑證 (本機使用，已被 .gitignore 排除)
-
+├── images/                 # 硬體接線與架構圖片
 ├── .gitignore              # Git 排除清單 (確保安全憑證不外洩)
-
 └── README.md               # 專案說明文件
-
 
 硬體物料清單 (BOM)
 1. 發射節點 (TX Node)
@@ -127,6 +90,7 @@ SX1262 LoRa：腳位與 TX 相同 (GPIO 5, 26, 14, 25, 23, 19, 18)
 
 VCC -> 3.3V | GND -> GND | SDA -> GPIO 21 | SCL -> GPIO 22
 
+系統接線示意圖
 快速開始 (Quick Start)
 1. 準備編譯環境
 安裝 Arduino IDE 或 PlatformIO。
@@ -146,17 +110,17 @@ U8g2
 
 將 config.example.h 複製一份並重新命名為 config.h。
 
-打開 config.h 填入你的 Wi-Fi SSID、密碼以及 HiveMQ 連線資訊：
+打開 config.h 填入你的連線資訊：
 
 C++
 
 
-const char* WIFI_SSID = "你的WiFi名稱";
-const char* WIFI_PSK  = "你的WiFi密碼";
-const char* MQTT_HOST = "你的Broker網址";
+const char* WIFI_SSID  = "你的WiFi名稱";
+const char* WIFI_PSK   = "你的WiFi密碼";
+const char* MQTT_HOST  = "你的Broker網址";
 const uint16_t MQTT_PORT = 8883;
-const char* MQTT_USER = "使用者帳號";
-const char* MQTT_PASS = "密碼";
+const char* MQTT_USER  = "使用者帳號";
+const char* MQTT_PASS  = "密碼";
 const char* MQTT_TOPIC = "agriculture/sensor/01";
 3. 燒錄與部署
 分別連接 TX 與 RX 開發板進行編譯並燒錄韌體。
@@ -170,6 +134,3 @@ const char* MQTT_TOPIC = "agriculture/sensor/01";
 
 開源授權
 本專案採 MIT License 授權釋出，歡迎社群自由 Fork、修改、延伸與實測反饋。
-
-![TX 接線圖](images/tx_wiring.jpg)
-![RX 接線圖](images/rx_wiring.jpg)
